@@ -49,7 +49,7 @@ getML100K <- function(needDownload=FALSE){
 }
 
 
-
+# find difference: 1 to length-1, 2 to length
 diff <- function(input){
   input<-sort(input)
   lengthin <- length(input)
@@ -58,7 +58,7 @@ diff <- function(input){
   return(output)
 }
 
-  
+
 mergeEm <- function(listOfVecs){
    wi <- lapply(listOfVecs,mean)
    return(wi)
@@ -66,20 +66,20 @@ mergeEm <- function(listOfVecs){
 
   
 waitTimes <- function(rawData){
-  rawDataOrder <- rawData[order(rawData$user),]
-  listOfVecs<-tapply(rawDataOrder$timestamp, rawDataOrder$user,diff)
-  wi <- mergeEm(listOfVecs)
-  rawDataAll <- sort(rawData[,c(2)])
-  w <- mean(diff(rawDataAll))
-  output <- list(wi,w)
-  return(output)
+  rawDataOrder <- rawData[order(rawData$user),] #sort according to user
+  listOfVecs<-tapply(rawDataOrder$timestamp, rawDataOrder$user,diff) # according to user, the difference of timestamp
+  wi <- mergeEm(listOfVecs) #get the mean of the difference for every user and store in wi
+  rawDataAll <- sort(rawData[,c(2)]) # sort the timestamp
+  w <- mean(diff(rawDataAll)) #use diff to get the difference and get the mean
+  output <- list(wi,w) # put these in a list
+  return(output) # return
 }
 
 ml100k <- getML100K(TRUE)
-rawData <- ml100k[,c(1,4)]
-times <- waitTimes(rawData)
-wi_10 <- times[[1]][1:10]
-w <- times[[2]]
+rawData <- ml100k[,c(1,4)] #user : 1, and timestamp: 4
+times <- waitTimes(rawData) # wi and w store here
+wi_10 <- times[[1]][1:10] # firsr 10 of wi, first()
+w <- times[[2]] #w is the second one, which is the overall mean
 print(wi_10)
 print(w)
 
