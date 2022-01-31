@@ -51,28 +51,28 @@ getML100K <- function(needDownload=FALSE){
 install.packages("ggplot2")
 library(ggplot2)
 ml100k <- getML100K()
-rawData <- ml100k[,c(2,12:19,30)]
-rawDataOrder <- rawData[order(rawData$item),]
-data <- unique(rawDataOrder)
-genreList<- data[,c(2:9)]
-
+rawData <- ml100k[,c(2,12:19,30)]# 2: item, 12:19 2-9 genres, 30; item mean
+rawDataOrder <- rawData[order(rawData$item),] #sort in order according to item
+data <- unique(rawDataOrder) #extract unique item
+genreList<- data[,c(2:9)] #2:9 只剩下unique genre list
+# loops through rows(items)
 for (i in 1:nrow(genreList)){
-  if (is.na(genreList[i,])){
-    genreList[i,] = c(rep(0,8))
+  if (is.na(genreList[i,])){ # if we encounter na
+    genreList[i,] = c(rep(0,8)) #, we change it to 0
   }
-  if (sum(genreList[i,])>1){
-    a <- sample(genreList[i,genreList[i,]==1],1)
-    genreList[i,] = c(rep(0,8))
+  if (sum(genreList[i,])>1){ #if movie has more than 1 genre
+    a <- sample(genreList[i,genreList[i,]==1],1) # use sample to randomlize a genre
+    genreList[i,] = c(rep(0,8)) #change the value of row to 0
     z <- colnames(a)
-    genreList[i,z] = 1
-    rm(a)
+    genreList[i,z] = 1 # put back a sample 1 back to genre list
+    rm(a) # remove temp variable
     rm(z)
   }
 }
 rm(i)
-
-g2 <- genreList[genreList$G2 == 1,]
-v_2 = vector()
+#
+g2 <- genreList[genreList$G2 == 1,] # extract the item at G2(which equals to 1)
+v_2 = vector()$add itemmean into v2
 for (item in rownames(g2)){
   v_2 <- append(v_2, data[item,]$itemMean)
 }
@@ -158,11 +158,11 @@ inputDF <- list(v_2,v_3,v_4,v_5,v_6,v_7,v_8,v_9)
 # inputDF[is.na(inputDF)] <- ""
 
 plotDensities <- function(inputDF,xName,grpName){
-  lineNumber <- length(grpName)
-  temp <- inputDF[[1]]
-  temp<- na.omit(temp)
-  getDensity<- density(temp)
-  plot(getDensity,main="density plot: mean rating for different genre", xlab = xName,ylim = c(0,1),col = 1)
+  lineNumber <- length(grpName)# get the length, grpName is genre of movie
+  temp <- inputDF[[1]] #get the 1st genre
+  temp<- na.omit(temp) # eliminate na
+  getDensity<- density(temp) # get the y value
+  plot(getDensity,main="density plot: mean rating for different genre", xlab = xName,ylim = c(0,1),col = 1) # get the canvas and get the line
   for (i in 2:lineNumber){
     temp <- inputDF[[i]]
     temp<- na.omit(temp)
