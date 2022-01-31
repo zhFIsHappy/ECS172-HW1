@@ -13,6 +13,7 @@ tableReaded$nameLength <-c(movieNameLength)
 tableReaded$extractedYear <- c(year)
 # get the mean of movie name length according to year
 afterMean <-tapply(tableReaded$nameLength,tableReaded$extractedYear,mean)
+# the first column is removed due to no value
 afterMean<-afterMean[-1];
 # construct releaseYear Variable using combine and for loop
 releaseYears <- c()
